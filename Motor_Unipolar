@@ -1,0 +1,361 @@
+/*
+                                Programa elaborado por:
+                           ING. LUIS DANIEL SANCHEZ ACOSTA
+                                  ING. MECATRÓNICA
+
+           Los motores bipolares tienen un numero de bobinas en pares
+           mientras que los Unipolares tienen las bobinas impares; pueden
+           tener un cable común (Tap central) que une a todas las bobinas
+           así como tambien se puede convertir algunos motores unipolares
+           en polares.
+
+                                     Bienvenida
+                                         ||
+                   Mover por Grados===============Mover por vueltas
+                          ||                             ||
+                          ||                             ||
+   ¿Cuantos grados?       ====== Introducir Número========      ¿Cuantas Vueltas?
+                                        ||
+                                        ||
+                  [Número de grados]=============[Numero de vueltas]
+                          ||                             ||
+                          ||                             ||
+                           =======¿en qué dirección?======
+                                          ||
+                                          ||
+                    Sentido Horario================Sentido Antihorario
+                          ||                                ||
+                          ||                                ||
+                           =============GIRAR================
+
+*/
+// Orden de bobinas de motor BJY-48
+int Azul = 3;
+int Rosa = 4;
+int Amarillo = 5;
+int Naranja = 6;
+
+int retardo = 7;
+int datoentrada = 0;
+int var = 0;
+int grados = 0;  //Variable para almacenar grados
+int vueltas = 0; //Variable para almacenar vueltas
+int numero = 0;  //Variable para guardar numero de grados o vueltas
+int turns;
+int paso = 0;
+int cont = 0;
+void setup() {
+  Serial.begin(115200);
+  pinMode(Azul, OUTPUT);
+  pinMode(Rosa, OUTPUT);
+  pinMode(Amarillo, OUTPUT);
+  pinMode(Naranja, OUTPUT);
+
+  digitalWrite(Azul, 0);
+  digitalWrite(Rosa, 0);
+  digitalWrite(Amarillo, 0);
+  digitalWrite(Naranja, 0);
+  delay(1000);
+
+}
+
+void loop() {
+
+  menu1();
+
+}
+
+void menu1() {
+  Serial.println("  |*********************************|");
+  Serial.println("  |**|  Control de Motor a pasos |**|");
+  Serial.println("  |**|        -Unipolar-         |**|");
+  Serial.println("  |**|      Grados y Vueltas     |**|");
+  Serial.println("  |**|           Menu            |**|");
+  Serial.println("  |*********************************|");
+  Serial.println("");
+  Serial.println("  Selecciona una opción:               ");
+  Serial.println("    1 para Mover por Grados  ");
+  Serial.println("    2 para Mover por Vueltas   ");
+  Serial.println("");
+
+  while (!Serial.available()) {}
+  int i = Serial.parseInt();
+  switch (i) {
+
+    case 1:
+      Serial.println("Has elegido mover por Grados");
+      Serial.println("");
+      Grados();
+      break;
+    case 2:
+      Serial.println("Has elegido mover por Vueltas");
+      Serial.println("");
+      Vueltas();
+      break;
+
+    default:
+      Serial.println("No se reconoce comando, introduzca otra opcion");
+      Serial.println("");
+  }
+}
+
+void Grados() {
+
+  Serial.println(" Cuantos Grados deseas?   ");
+  Serial.println("");
+  while (!Serial.available()) {}
+  numero = Serial.parseInt();
+  Serial.println("Muy bien, otra cosa más...");
+  Serial.println("");
+  Sentido();
+
+}
+
+void Vueltas() {
+
+  Serial.println(" Cuantas Vueltas deseas?   ");
+  Serial.println("");
+  while (!Serial.available()) {}
+  numero = Serial.parseInt();
+  Serial.println("Muy bien, otra cosa más...");
+  Serial.println("");
+  SentidoV();
+}
+
+void Sentido() {
+
+  Serial.println("|* En qué sentido deseas mover el motor? *|");
+  Serial.println("");
+  Serial.println("  Selecciona una opción:               ");
+  Serial.println("  1 para Mover en Sentido horario  ");
+  Serial.println("  2 para Mover en Sentido Antihorario    ");
+  Serial.println("");
+
+  while (!Serial.available()) {}
+  int a = Serial.parseInt();
+  switch (a) {
+
+    case 1:
+      Serial.println("Has elegido Sentido Horario");
+      Serial.println("");
+      Horario();
+      break;
+    case 2:
+      Serial.println("Has elegido Sentido Antihorario");
+      Serial.println("");
+      Antihorario();
+      break;
+
+    default:
+      Serial.println("No se reconoce comando, introduzca otra opcion");
+      Serial.println("");
+  }
+}
+
+void Horario() {
+  Serial.println("Girando...");
+  paso = 1;
+  float angulo = numero * 5.6888;
+  for (float cont = 0; cont < angulo ; cont++) {
+    if (paso == 1) {
+      digitalWrite(Azul, 1);
+      digitalWrite(Rosa, 0);
+      digitalWrite(Amarillo, 0);
+      digitalWrite(Naranja, 0);
+
+    }
+
+    if (paso == 2) {
+      digitalWrite(Azul, 0);
+      digitalWrite(Rosa, 1);
+      digitalWrite(Amarillo, 0);
+      digitalWrite(Naranja, 0);
+
+    }
+
+    if (paso == 3) {
+      digitalWrite(Azul, 0);
+      digitalWrite(Rosa, 0);
+      digitalWrite(Amarillo, 1);
+      digitalWrite(Naranja, 0);
+
+    }
+
+    if (paso == 4) {
+      digitalWrite(Azul, 0);
+      digitalWrite(Rosa, 0);
+      digitalWrite(Amarillo, 0);
+      digitalWrite(Naranja, 1);
+
+    }
+    delay (retardo);
+    paso ++;
+
+    if ( 4 < paso) {
+      paso = 1;
+    }
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+
+  }
+}
+
+void Antihorario() {
+  Serial.println("Girando...");
+  paso = 1;
+  float angulo = numero * 5.6888;
+  for (float cont = 0; cont < angulo ; cont++) {
+    if (paso == 1) {
+      digitalWrite(Azul, 0);
+      digitalWrite(Rosa, 0);
+      digitalWrite(Amarillo, 0);
+      digitalWrite(Naranja, 1);
+
+    }
+
+
+    if (paso == 2) {
+      digitalWrite(Azul, 0);
+      digitalWrite(Rosa, 0);
+      digitalWrite(Amarillo, 1);
+      digitalWrite(Naranja, 0);
+
+    }
+
+
+    if (paso == 3) {
+      digitalWrite(Azul, 0);
+      digitalWrite(Rosa, 1);
+      digitalWrite(Amarillo, 0);
+      digitalWrite(Naranja, 0);
+
+    }
+
+
+
+    if (paso == 4) {
+      digitalWrite(Azul, 1);
+      digitalWrite(Rosa, 0);
+      digitalWrite(Amarillo, 0);
+      digitalWrite(Naranja, 0);
+
+    }
+    delay (retardo);
+    paso ++;
+
+
+    if ( 4 < paso) {
+      paso = 1;
+    }
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+
+  }
+}
+
+void SentidoV() {
+  Serial.println("|* En qué sentido deseas mover el motor? *|");
+  Serial.println("");
+  Serial.println("  Selecciona una opción:               ");
+  Serial.println("  1 para Mover en Sentido horario  ");
+  Serial.println("  2 para Mover en Sentido Antihorario    ");
+  Serial.println("");
+
+  while (!Serial.available()) {}
+  int a = Serial.parseInt();
+  switch (a) {
+
+    case 1:
+      Serial.println("Has elegido Sentido Horario");
+      Serial.println("");
+      HorarioV();
+      break;
+    case 2:
+      Serial.println("Has elegido Sentido Antihorario");
+      Serial.println("");
+      AntihorarioV();
+      break;
+
+    default:
+      Serial.println("No se reconoce comando, introduzca otra opcion");
+      Serial.println("");
+  }
+}
+
+
+void HorarioV() {
+  Serial.print(numero);
+  turns = numero * 512;
+  Serial.print(turns);
+  Serial.println("Girando...");
+  for ( int cont = 0; cont <= turns; cont ++) {
+    digitalWrite(Azul, 1);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+    delay (retardo);
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 1);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+    delay(retardo);
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 1);
+    digitalWrite(Naranja, 0);
+    delay (retardo);
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 1);
+    delay (retardo);
+    Serial.println(cont);
+  }
+
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+    delay (10);
+
+}
+
+
+void AntihorarioV() {
+  Serial.println("Girando...");
+  turns = numero * 512;
+  for ( int cont = 0; cont < turns; cont ++) {
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 1);
+    delay (retardo);
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 1);
+    digitalWrite(Naranja, 0);
+    delay(retardo);
+    digitalWrite(Azul, 0);
+    digitalWrite(Rosa, 1);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+    delay (retardo);
+    digitalWrite(Azul, 1);
+    digitalWrite(Rosa, 0);
+    digitalWrite(Amarillo, 0);
+    digitalWrite(Naranja, 0);
+    delay (retardo);
+    Serial.println(cont);
+  }
+
+  digitalWrite(Azul, 0);
+  digitalWrite(Rosa, 0);
+  digitalWrite(Amarillo, 0);
+  digitalWrite(Naranja, 0);
+  delay (10);
+
+}
